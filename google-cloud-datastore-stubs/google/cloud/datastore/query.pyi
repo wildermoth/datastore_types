@@ -54,7 +54,16 @@ class And(BaseCompositeFilter):
     def __init__(self, filters: List[Union[BaseFilter, Tuple[str, str, Any]]]) -> None: ...
 
 class Query:
-    """A Query against the Cloud Datastore."""
+    """A Query against the Cloud Datastore.
+
+    Build queries by adding filters, projection, and ordering. Then fetch
+    results using the fetch() or iterator methods.
+
+    Example:
+        query = client.query(kind='Task')
+        query.add_filter('done', '=', False)
+        results = list(query.fetch())
+    """
 
     OPERATORS: Dict[str, int]
 
