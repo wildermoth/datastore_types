@@ -5,7 +5,16 @@ from typing import Any, Dict, Iterable, Optional, Set, Tuple, Union
 from google.cloud.datastore.key import Key
 
 class Entity(Dict[str, Any]):
-    """Entities are akin to rows in a relational database."""
+    """Entities are akin to rows in a relational database.
+
+    An Entity is a dictionary-like object that stores property values and
+    is uniquely identified by a Key.
+
+    Example:
+        entity = Entity(key=key)
+        entity['name'] = 'Alice'
+        client.put(entity)
+    """
 
     key: Optional[Key]
     exclude_from_indexes: Set[str]
@@ -22,7 +31,11 @@ class Entity(Dict[str, Any]):
     def __repr__(self) -> str: ...
 
     @property
-    def kind(self) -> Optional[str]: ...
+    def kind(self) -> Optional[str]:
+        """The kind of this entity (from the key)."""
+        ...
 
     @property
-    def id(self) -> Optional[int]: ...
+    def id(self) -> Optional[int]:
+        """The integer ID of this entity (from the key)."""
+        ...

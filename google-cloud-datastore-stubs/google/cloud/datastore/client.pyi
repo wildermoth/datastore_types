@@ -20,7 +20,13 @@ DATASTORE_DATASET: str
 DISABLE_GRPC: str
 
 class Client(ClientWithProject):
-    """Convenience wrapper for invoking APIs/factories w/ a project."""
+    """Client for Google Cloud Datastore.
+
+    Use this client to interact with Google Cloud Datastore:
+        client = datastore.Client(project='my-project')
+        key = client.key('Task', 'sample-task')
+        entity = client.get(key)
+    """
 
     SCOPE: Tuple[str, ...]
 
@@ -79,7 +85,12 @@ class Client(ClientWithProject):
         retry: Optional[retry_module.Retry] = ...,
         timeout: Optional[float] = ...,
         read_time: Optional[datetime.datetime] = ...
-    ) -> Optional[Entity]: ...
+    ) -> Optional[Entity]:
+        """Fetch a single entity by key.
+
+        Returns the entity if found, None otherwise.
+        """
+        ...
 
     def get_multi(
         self,
@@ -91,35 +102,48 @@ class Client(ClientWithProject):
         retry: Optional[retry_module.Retry] = ...,
         timeout: Optional[float] = ...,
         read_time: Optional[datetime.datetime] = ...
-    ) -> List[Entity]: ...
+    ) -> List[Entity]:
+        """Fetch multiple entities by keys.
+
+        Returns a list of entities found.
+        """
+        ...
 
     def put(
         self,
         entity: Entity,
         retry: Optional[retry_module.Retry] = ...,
         timeout: Optional[float] = ...
-    ) -> None: ...
+    ) -> None:
+        """Write a single entity to the datastore."""
+        ...
 
     def put_multi(
         self,
         entities: Iterable[Entity],
         retry: Optional[retry_module.Retry] = ...,
         timeout: Optional[float] = ...
-    ) -> None: ...
+    ) -> None:
+        """Write multiple entities to the datastore."""
+        ...
 
     def delete(
         self,
         key: Union[Key, Entity],
         retry: Optional[retry_module.Retry] = ...,
         timeout: Optional[float] = ...
-    ) -> None: ...
+    ) -> None:
+        """Delete a single entity by key or entity."""
+        ...
 
     def delete_multi(
         self,
         keys: Sequence[Union[Key, Entity]],
         retry: Optional[retry_module.Retry] = ...,
         timeout: Optional[float] = ...
-    ) -> None: ...
+    ) -> None:
+        """Delete multiple entities by keys."""
+        ...
 
     def allocate_ids(
         self,
@@ -134,21 +158,39 @@ class Client(ClientWithProject):
         *path_args: Union[str, int],
         namespace: Optional[str] = ...,
         **kwargs: Any
-    ) -> Key: ...
+    ) -> Key:
+        """Create a Key factory method.
+
+        Example: client.key('Task', 'sample-task')
+        """
+        ...
 
     def entity(
         self,
         key: Optional[Key] = ...,
         exclude_from_indexes: Union[Tuple[str, ...], Iterable[str]] = ...
-    ) -> Entity: ...
+    ) -> Entity:
+        """Create a new Entity bound to this client.
 
-    def batch(self) -> Batch: ...
+        Example: entity = client.entity(key=key)
+        """
+        ...
 
-    def transaction(self, **kwargs: Any) -> Transaction: ...
+    def batch(self) -> Batch:
+        """Create a new Batch for batched operations."""
+        ...
 
-    def query(self, **kwargs: Any) -> Query: ...
+    def transaction(self, **kwargs: Any) -> Transaction:
+        """Create a new Transaction for transactional operations."""
+        ...
 
-    def aggregation_query(self, query: Query, **kwargs: Any) -> AggregationQuery: ...
+    def query(self, **kwargs: Any) -> Query:
+        """Create a new Query for fetching entities."""
+        ...
+
+    def aggregation_query(self, query: Query, **kwargs: Any) -> AggregationQuery:
+        """Create an AggregationQuery for aggregating query results."""
+        ...
 
     def reserve_ids_sequential(
         self,

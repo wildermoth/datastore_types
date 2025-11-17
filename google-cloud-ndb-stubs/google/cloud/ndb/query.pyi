@@ -124,7 +124,12 @@ class QueryOptions:
 
 # Main Query class
 class Query(Generic[_ModelT]):
-    """A query for datastore entities."""
+    """A query for datastore entities.
+
+    Example:
+        query = MyModel.query(MyModel.name == 'Alice')
+        results = query.fetch()
+    """
 
     def __init__(
         self,
@@ -143,8 +148,13 @@ class Query(Generic[_ModelT]):
         database: Optional[str] = ...,
     ) -> None: ...
 
-    def filter(self, *filters: Node) -> Query[_ModelT]: ...
-    def order(self, *props: Union[model_module.Property[Any], str]) -> Query[_ModelT]: ...
+    def filter(self, *filters: Node) -> Query[_ModelT]:
+        """Add filter conditions to the query. Returns a new Query."""
+        ...
+
+    def order(self, *props: Union[model_module.Property[Any], str]) -> Query[_ModelT]:
+        """Add ordering to the query. Use -prop for descending. Returns a new Query."""
+        ...
 
     def analyze(self) -> List[Any]: ...
 
@@ -152,42 +162,59 @@ class Query(Generic[_ModelT]):
         self,
         limit: Optional[int] = ...,
         **ctx_options: Any,
-    ) -> List[_ModelT]: ...
+    ) -> List[_ModelT]:
+        """Synchronously fetch all matching entities up to limit."""
+        ...
 
     def fetch_async(
         self,
         limit: Optional[int] = ...,
         **ctx_options: Any,
-    ) -> tasklets.Future[List[_ModelT]]: ...
+    ) -> tasklets.Future[List[_ModelT]]:
+        """Asynchronously fetch all matching entities up to limit."""
+        ...
 
     def fetch_page(
         self,
         page_size: int,
         start_cursor: Optional[Cursor] = ...,
         **ctx_options: Any,
-    ) -> Tuple[List[_ModelT], Optional[Cursor], bool]: ...
+    ) -> Tuple[List[_ModelT], Optional[Cursor], bool]:
+        """Fetch a page of results. Returns (entities, next_cursor, more_results)."""
+        ...
 
     def fetch_page_async(
         self,
         page_size: int,
         start_cursor: Optional[Cursor] = ...,
         **ctx_options: Any,
-    ) -> tasklets.Future[Tuple[List[_ModelT], Optional[Cursor], bool]]: ...
+    ) -> tasklets.Future[Tuple[List[_ModelT], Optional[Cursor], bool]]:
+        """Asynchronously fetch a page. Returns Future of (entities, cursor, more)."""
+        ...
 
-    def get(self, **ctx_options: Any) -> Optional[_ModelT]: ...
-    def get_async(self, **ctx_options: Any) -> tasklets.Future[Optional[_ModelT]]: ...
+    def get(self, **ctx_options: Any) -> Optional[_ModelT]:
+        """Synchronously fetch the first matching entity, or None."""
+        ...
+
+    def get_async(self, **ctx_options: Any) -> tasklets.Future[Optional[_ModelT]]:
+        """Asynchronously fetch the first matching entity."""
+        ...
 
     def count(
         self,
         limit: Optional[int] = ...,
         **ctx_options: Any,
-    ) -> int: ...
+    ) -> int:
+        """Synchronously count matching entities up to limit."""
+        ...
 
     def count_async(
         self,
         limit: Optional[int] = ...,
         **ctx_options: Any,
-    ) -> tasklets.Future[int]: ...
+    ) -> tasklets.Future[int]:
+        """Asynchronously count matching entities."""
+        ...
 
     def iter(
         self,
@@ -221,4 +248,9 @@ class Query(Generic[_ModelT]):
     @property
     def projection(self) -> Optional[Tuple[str, ...]]: ...
 
-def gql(query_string: str, *args: Any, **kwargs: Any) -> Query[Any]: ...
+def gql(query_string: str, *args: Any, **kwargs: Any) -> Query[Any]:
+    """Parse a GQL query string and return a Query object.
+
+    Example: gql("SELECT * FROM Task WHERE done = False")
+    """
+    ...

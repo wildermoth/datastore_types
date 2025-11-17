@@ -393,7 +393,15 @@ class MetaModel(type):
 
 # Model class
 class Model:
-    """Base class for datastore models."""
+    """Base class for datastore models.
+
+    To define a model, subclass Model and define Property attributes:
+        class MyModel(Model):
+            name = StringProperty()
+            count = IntegerProperty(default=0)
+
+    Each entity has a key (may be None before first save) and property values.
+    """
 
     _properties: Dict[str, Property[Any]]
     _has_repeated: bool
@@ -435,8 +443,19 @@ class Model:
     def _pre_get_hook(cls, key: key_module.Key) -> None: ...
     def _post_get_hook(cls, key: key_module.Key, future: tasklets.Future[Optional[Model]]) -> None: ...
 
-    def put(self, **ctx_options: Any) -> key_module.Key: ...
-    def put_async(self, **ctx_options: Any) -> tasklets.Future[key_module.Key]: ...
+    def put(self, **ctx_options: Any) -> key_module.Key:
+        """Synchronously write this entity to the datastore.
+
+        Returns the entity's key (possibly with allocated ID).
+        """
+        ...
+
+    def put_async(self, **ctx_options: Any) -> tasklets.Future[key_module.Key]:
+        """Asynchronously write this entity to the datastore.
+
+        Returns a Future that will resolve to the entity's key.
+        """
+        ...
 
     @classmethod
     def get_by_id(
@@ -448,7 +467,12 @@ class Model:
         project: Optional[str] = ...,
         database: Optional[str] = ...,
         **ctx_options: Any,
-    ) -> Optional[_ModelT]: ...
+    ) -> Optional[_ModelT]:
+        """Synchronously fetch an entity by ID.
+
+        Returns the entity if found, None otherwise.
+        """
+        ...
 
     @classmethod
     def get_by_id_async(
@@ -505,15 +529,28 @@ class Model:
     ) -> tasklets.Future[Tuple[key_module.Key, key_module.Key]]: ...
 
     @classmethod
-    def query(cls: Type[_ModelT], *args: query_module.Node, **kwargs: Any) -> query_module.Query: ...
+    def query(cls: Type[_ModelT], *args: query_module.Node, **kwargs: Any) -> query_module.Query:
+        """Create a query for entities of this model kind.
 
-    def populate(self, **kwargs: Any) -> None: ...
-    def has_complete_key(self) -> bool: ...
+        Args can be filter nodes. Returns a Query object.
+        """
+        ...
+
+    def populate(self, **kwargs: Any) -> None:
+        """Set property values from keyword arguments."""
+        ...
+
+    def has_complete_key(self) -> bool:
+        """Return True if this entity has a complete key (not partial)."""
+        ...
+
     def to_dict(
         self,
         include: Optional[Union[Iterable[str], Dict[str, Any]]] = ...,
         exclude: Optional[Union[Iterable[str], Dict[str, Any]]] = ...,
-    ) -> Dict[str, Any]: ...
+    ) -> Dict[str, Any]:
+        """Convert this entity to a dictionary of property names to values."""
+        ...
 
     @classmethod
     def _lookup_model(
@@ -530,34 +567,65 @@ class Expando(Model):
 def get_multi(
     keys: Iterable[key_module.Key],
     **ctx_options: Any,
-) -> List[Optional[Model]]: ...
+) -> List[Optional[Model]]:
+    """Synchronously fetch multiple entities by key.
+
+    Returns a list of entities (or None for keys that don't exist).
+    """
+    ...
 
 def get_multi_async(
     keys: Iterable[key_module.Key],
     **ctx_options: Any,
-) -> tasklets.Future[List[Optional[Model]]]: ...
+) -> tasklets.Future[List[Optional[Model]]]:
+    """Asynchronously fetch multiple entities by key.
+
+    Returns a Future that resolves to a list of entities.
+    """
+    ...
 
 def put_multi(
     entities: Iterable[Model],
     **ctx_options: Any,
-) -> List[key_module.Key]: ...
+) -> List[key_module.Key]:
+    """Synchronously write multiple entities to the datastore.
+
+    Returns a list of keys for the saved entities.
+    """
+    ...
 
 def put_multi_async(
     entities: Iterable[Model],
     **ctx_options: Any,
-) -> tasklets.Future[List[key_module.Key]]: ...
+) -> tasklets.Future[List[key_module.Key]]:
+    """Asynchronously write multiple entities to the datastore.
+
+    Returns a Future that resolves to a list of keys.
+    """
+    ...
 
 def delete_multi(
     keys: Iterable[key_module.Key],
     **ctx_options: Any,
-) -> None: ...
+) -> None:
+    """Synchronously delete multiple entities by key."""
+    ...
 
 def delete_multi_async(
     keys: Iterable[key_module.Key],
     **ctx_options: Any,
-) -> tasklets.Future[None]: ...
+) -> tasklets.Future[None]:
+    """Asynchronously delete multiple entities by key."""
+    ...
 
-def get_indexes(**ctx_options: Any) -> List[Index]: ...
-def get_indexes_async(**ctx_options: Any) -> tasklets.Future[List[Index]]: ...
+def get_indexes(**ctx_options: Any) -> List[Index]:
+    """Synchronously fetch all datastore indexes."""
+    ...
 
-def make_connection(config: Optional[Any] = ...) -> Any: ...
+def get_indexes_async(**ctx_options: Any) -> tasklets.Future[List[Index]]:
+    """Asynchronously fetch all datastore indexes."""
+    ...
+
+def make_connection(config: Optional[Any] = ...) -> Any:
+    """Create a datastore connection from configuration."""
+    ...

@@ -50,7 +50,11 @@ class AutoBatcher:
     ...
 
 class Context:
-    """Runtime context for NDB operations."""
+    """Runtime context for NDB operations.
+
+    Manages caching, batching, and other runtime state for NDB operations.
+    Use as a context manager with client.context().
+    """
 
     def __init__(
         self,
@@ -71,7 +75,10 @@ class Context:
         legacy_data: bool = ...,
     ) -> None: ...
 
-    def use(self) -> Context: ...
+    def use(self) -> Context:
+        """Activate this context as the current context."""
+        ...
+
     def __enter__(self) -> Context: ...
     def __exit__(self, exc_type: Any, exc_val: Any, exc_tb: Any) -> None: ...
 
@@ -104,5 +111,13 @@ class Context:
 
     def urlfetch(self, *args: Any, **kwargs: Any) -> Any: ...
 
-def get_context(raise_context_error: bool = ...) -> Context: ...
-def get_toplevel_context(raise_context_error: bool = ...) -> Context: ...
+def get_context(raise_context_error: bool = ...) -> Context:
+    """Get the current NDB context.
+
+    Raises an exception if no context is active and raise_context_error is True.
+    """
+    ...
+
+def get_toplevel_context(raise_context_error: bool = ...) -> Context:
+    """Get the top-level (outermost) NDB context."""
+    ...
